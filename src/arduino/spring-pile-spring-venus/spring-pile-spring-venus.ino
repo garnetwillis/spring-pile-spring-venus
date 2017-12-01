@@ -6,24 +6,23 @@ constant int STATE_PAUSED_UP = 3;
 constant int STATE_MOVING_DOWN = 4;
 constant int STATE_PAUSED_DOWN = 5;
 
-// TODO: add pin constants
+constant int ON_OFF_PIN = 10;
+constant int POLARITY_PIN = 11;
 
-// TODO: set proper durations
-
-constant int RESET_DURATION = 30 * 1000;
+constant int RESET_DURATION = 20 * 1000;
 constant int INIT_DURATION = 20 * 1000;
 
-constant int MIN_PAUSE_DURATION = 10;
-constant int MAX_PAUSE_DURATION = 100;
+constant int MIN_PAUSE_DURATION = 5 * 1000;
+constant int MAX_PAUSE_DURATION = 10 * 1000;
 
-constant int MIN_MOVING_UP_DURATION = 10;
-constant int MAX_MOVING_UP_DURATION = 100;
-constant int MOVING_DOWN_DURATION_ADDITION = 100;
+constant int MIN_MOVING_UP_DURATION = 5 * 1000;
+constant int MAX_MOVING_UP_DURATION = 10 * 1000;
+constant int MOVING_DOWN_DURATION_ADDITION = 1000;
 
 
 // vars
-int previousState;
-int currentState;
+int previousState = -1;
+int currentState = -1;
 int pauseDuration = 0;
 int movingUpDuration = 0;
 int movingDownDuration = 0;
@@ -31,6 +30,11 @@ int movingDownDuration = 0;
 
 // arduino methods
 void setup() {
+  // set pins
+  pinMode(ON_OFF_PIN, OUTPUT);
+  pinMode(POLARITY_PIN, OUTPUT);
+
+  // start the process
   reset();
 }
 
@@ -43,42 +47,68 @@ void loop() {
 void reset() {
   setState(STATE_RESETTING);
 
-  // TODO: move peg down for a few seconds to ensure all is set
-  // - send MOTOR_OUT_PIN value(s) to lower peg
-  // - wait/while RESET_DURATION lasts
-  // - trigger next state
+  // set to move cylinder down
+  digitalWrite(ON_OFF_PIN, LOW);
+  digitalWrite(POLARITY_PIN, LOW);
 
+  // stay at this setting long enough to
+  // ensure cylinder goes all the way down
   delay(RESET_DURATION);
+
   gotoNextState();
 }
 
 void init() {
   setState(STATE_INIT);
+
+  // remain inactive for a short while
   delay(INIT_DURATION);
+
   gotoNextState();
 }
 
 void moveUp() {
   setState(STATE_MOVING_UP);
 
-  // TODO: set pin(s) to move peg up
+  // set pin for actuator to move cylinder upwards
+  digitalWrite(POLARITY_PIN, LOW);
 
+  // delay shortly to ensure polarity is switched
+  // before powering actuator
+  delay(10);
+
+  // power actuator
+  digitalWrite(ON_OFF_PIN, HIGH);
+
+  // get new random duration
   setMovingDownDuration();
   delay(movingUpDuration);
+
   gotoNextState();
 }
 
 void moveDown() {
   setState(STATE_MOVING_UP);
 
-  // TODO: set pin(s) to move peg down
+  // set pin for actuator to move cylinder downwards
+  digitalWrite(POLARITY_PIN, HIGH);
 
+  // delay shortly to ensure polarity is switched
+  // before powering actuator
+  delay(10);
+
+  // power actuator
+  digitalWrite(ON_OFF_PIN, LOW);
+
+  // get new random duration
   setMovingDownDuration();
   delay(movingDownDuration);
+
   gotoNextState();
 }
 
 void pause() {
+  // set new state according to the previous state
   switch (previousState) {
     case STATE_MOVING_UP:
       setState(STATE_PAUSED_UP);
@@ -89,8 +119,13 @@ void pause() {
       break;
   }
 
+  // disable pin so actuator is off
+  digitalWrite(ON_OFF_PIN, LOW);
+
+  // get new random duration
   setPauseDuration();
   delay(pauseDuration);
+
   gotoNextState();
 }
 
