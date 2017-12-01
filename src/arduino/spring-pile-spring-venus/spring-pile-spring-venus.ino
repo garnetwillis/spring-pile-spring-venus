@@ -45,7 +45,7 @@ void loop() {
       break;
 
     case STATE_INIT:
-      init();
+      prepare();
       break;
 
     case STATE_MOVING_UP:
@@ -80,7 +80,7 @@ void reset() {
   delay(RESET_DURATION);
 }
 
-void init() {
+void prepare() {
   // remain inactive for a short while
   delay(INIT_DURATION);
 }
