@@ -34,19 +34,43 @@ void setup() {
   pinMode(ON_OFF_PIN, OUTPUT);
   pinMode(POLARITY_PIN, OUTPUT);
 
-  // start the process
-  reset();
+  // set initial state
+  setState(STATE_RESETTING);
 }
 
 void loop() {
-  // TODO?
+  switch (currentState) {
+    case STATE_RESETTING:
+      reset();
+      break;
+
+    case STATE_INIT:
+      init();
+      break;
+
+    case STATE_MOVING_UP:
+      moveUp();
+      break;
+
+    case STATE_PAUSED_UP:
+      pause();
+      break;
+
+    case STATE_MOVING_DOWN:
+      moveDown();
+      break;
+
+    case STATE_PAUSED_DOWN:
+      pause();
+      break;
+  }
+
+  gotoNextState();
 }
 
 
 // method definitions
 void reset() {
-  setState(STATE_RESETTING);
-
   // set to move cylinder down
   digitalWrite(ON_OFF_PIN, LOW);
   digitalWrite(POLARITY_PIN, LOW);
@@ -54,22 +78,14 @@ void reset() {
   // stay at this setting long enough to
   // ensure cylinder goes all the way down
   delay(RESET_DURATION);
-
-  gotoNextState();
 }
 
 void init() {
-  setState(STATE_INIT);
-
   // remain inactive for a short while
   delay(INIT_DURATION);
-
-  gotoNextState();
 }
 
 void moveUp() {
-  setState(STATE_MOVING_UP);
-
   // set pin for actuator to move cylinder upwards
   digitalWrite(POLARITY_PIN, LOW);
 
@@ -83,13 +99,9 @@ void moveUp() {
   // get new random duration
   setMovingUpDuration();
   delay(movingUpDuration);
-
-  gotoNextState();
 }
 
 void moveDown() {
-  setState(STATE_MOVING_UP);
-
   // set pin for actuator to move cylinder downwards
   digitalWrite(POLARITY_PIN, HIGH);
 
@@ -103,30 +115,15 @@ void moveDown() {
   // get new random duration
   setMovingDownDuration();
   delay(movingDownDuration);
-
-  gotoNextState();
 }
 
 void pause() {
-  // set new state according to the previous state
-  switch (previousState) {
-    case STATE_MOVING_UP:
-      setState(STATE_PAUSED_UP);
-      break;
-
-    case STATE_MOVING_DOWN:
-      setState(STATE_PAUSED_DOWN);
-      break;
-  }
-
   // disable pin so actuator is off
   digitalWrite(ON_OFF_PIN, LOW);
 
   // get new random duration
   setPauseDuration();
   delay(pauseDuration);
-
-  gotoNextState();
 }
 
 
@@ -145,15 +142,27 @@ void setState(int newState) {
 void gotoNextState() {
   switch (currentState) {
     case STATE_RESETTING:
+      setState(STATE_INIT);
+      break;
+
     case STATE_INIT:
+      setState(STATE_MOVING_UP);
+      break;
+
     case STATE_MOVING_UP:
+      setState(STATE_PAUSED_UP);
+      break;
+
     case STATE_PAUSED_UP:
+      setState(STATE_MOVING_DOWN);
+      break;
+
     case STATE_MOVING_DOWN:
-      currentState++;
+      setState(STATE_PAUSED_DOWN);
       break;
 
     case STATE_PAUSED_DOWN:
-      currentState = STATE_MOVING_UP;
+      setState(STATE_MOVING_UP);
       break;
   }
 }
