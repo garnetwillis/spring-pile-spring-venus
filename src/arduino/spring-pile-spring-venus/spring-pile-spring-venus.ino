@@ -81,7 +81,7 @@ void moveUp() {
   digitalWrite(ON_OFF_PIN, HIGH);
 
   // get new random duration
-  setMovingDownDuration();
+  setMovingUpDuration();
   delay(movingUpDuration);
 
   gotoNextState();
