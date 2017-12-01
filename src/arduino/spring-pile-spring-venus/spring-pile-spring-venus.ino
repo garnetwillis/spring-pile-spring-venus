@@ -1,23 +1,23 @@
 // constants
-constant int STATE_RESETTING = 0;
-constant int STATE_INIT = 1;
-constant int STATE_MOVING_UP = 2;
-constant int STATE_PAUSED_UP = 3;
-constant int STATE_MOVING_DOWN = 4;
-constant int STATE_PAUSED_DOWN = 5;
+const int STATE_RESETTING = 0;
+const int STATE_INIT = 1;
+const int STATE_MOVING_UP = 2;
+const int STATE_PAUSED_UP = 3;
+const int STATE_MOVING_DOWN = 4;
+const int STATE_PAUSED_DOWN = 5;
 
-constant int ON_OFF_PIN = 10;
-constant int POLARITY_PIN = 11;
+const int ON_OFF_PIN = 10;
+const int POLARITY_PIN = 11;
 
-constant int RESET_DURATION = 20 * 1000;
-constant int INIT_DURATION = 20 * 1000;
+const int RESET_DURATION = 20 * 1000;
+const int INIT_DURATION = 20 * 1000;
 
-constant int MIN_PAUSE_DURATION = 5 * 1000;
-constant int MAX_PAUSE_DURATION = 10 * 1000;
+const int MIN_PAUSE_DURATION = 5 * 1000;
+const int MAX_PAUSE_DURATION = 10 * 1000;
 
-constant int MIN_MOVING_UP_DURATION = 5 * 1000;
-constant int MAX_MOVING_UP_DURATION = 10 * 1000;
-constant int MOVING_DOWN_DURATION_ADDITION = 1000;
+const int MIN_MOVING_UP_DURATION = 5 * 1000;
+const int MAX_MOVING_UP_DURATION = 10 * 1000;
+const int MOVING_DOWN_DURATION_ADDITION = 1000;
 
 
 // vars
