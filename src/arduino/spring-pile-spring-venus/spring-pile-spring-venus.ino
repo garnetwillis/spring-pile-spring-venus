@@ -98,7 +98,7 @@ void moveDown() {
   delay(10);
 
   // power actuator
-  digitalWrite(ON_OFF_PIN, LOW);
+  digitalWrite(ON_OFF_PIN, HIGH);
 
   // get new random duration
   setMovingDownDuration();
